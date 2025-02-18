@@ -170,7 +170,7 @@ export const resetPassword = async (passwords) => {
   }
 };
 
-export const fetchMovieDetails = async (movieId) => {
+export const fetchMovieDetails = async (id) => {
   try {
     let response = await fetch(
       `https://gtmovies.onrender.com/api/custommovies/${id}/`
