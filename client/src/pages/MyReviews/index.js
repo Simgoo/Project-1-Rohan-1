@@ -19,6 +19,7 @@ function MyReviews() {
       if (!response.success) {
         throw new Error("Failed to fetch user reviews");
       }
+<<<<<<< HEAD
       const movieReviews = await Promise.all(
         response.reviews.map(async (review) => {
           const movieData = await fetchMovieDetails(review.movieId);
@@ -46,6 +47,35 @@ function MyReviews() {
     }
   };
 
+=======
+
+      const movieReviews = await Promise.all(
+        response.reviews.map(async (review) => {
+          const movieData = await fetchMovieDetails(review.movieId);
+
+          return {
+            ...review,
+            movie: {
+              title: movieData.title || "Unknown Movie",
+              poster:
+                movieData.image ||
+                (movieData.poster_path
+                  ? `https://image.tmdb.org/t/p/w500${movieData.poster_path}`
+                  : "/placeholder.jpg"),
+            },
+          };
+        })
+      );
+
+      setReviews(movieReviews);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+>>>>>>> 9f78de84 (Fixing myreviews with custom movies)
   return (
     <div className="my-reviews-page">
       <NavBar />
