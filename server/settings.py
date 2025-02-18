@@ -141,9 +141,3 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 TMDB_API_KEY = "b7e53cd3f6fdf95ed3ec34f7bbf27823"
 
 CORS_ALLOW_ALL_ORIGINS = True
-
-STORAGES = {
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
