@@ -1,22 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import NavBar from "../../components/NavBar";
 import ReviewSection from "../../components/ReviewSection";
 import "./styles.css";
-import { CartUser } from "../../api";
+import { CartContext } from "../../components/CartContext";
 import ReviewPopup from "../../components/ReviewPopup";
 
 function MovieDetails({ setIsAuthenticated }) {
-  const [movie, setMovie] = useState([null]); // setting up movie request
+  const [movie, setMovie] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { id } = useParams();
   const token = localStorage.getItem("token");
   const [isReviewPopupOpen, setIsReviewPopupOpen] = useState(false);
+  const { updateCart } = useContext(CartContext);
 
   useEffect(() => {
     fetchMovies();
     window.scrollTo(0, 0);
-  }, [id]); //request movies
+  }, [id]);
 
   const fetchMovies = async () => {
     try {
@@ -41,7 +43,7 @@ function MovieDetails({ setIsAuthenticated }) {
       const data = await response.json();
       // Ensure correct image formatting if coming from TMDB
       const movieData = {
-        id: data.id, // ✅ Match Django model field name
+        id: data.id,
         title: data.title,
         rating: data.vote_average || data.rating,
         description: data.description || data.overview,
@@ -52,7 +54,7 @@ function MovieDetails({ setIsAuthenticated }) {
             ? `https://image.tmdb.org/t/p/w500${data.poster_path}`
             : ""),
         backdrop:
-          data.backdrop || // Check if it's available in your local database
+          data.backdrop ||
           `https://image.tmdb.org/t/p/original${data.backdrop_path}`,
       };
 
@@ -95,11 +97,11 @@ function MovieDetails({ setIsAuthenticated }) {
       // Construct request payload using available movie data
       const payload = {
         movie_id: movieId,
-        movie_title: movieData.title || movieTitle, // Use TMDB title if available
+        movie_title: movieData.title || movieTitle,
         image: movieData.poster_path
           ? `https://image.tmdb.org/t/p/w500${movieData.poster_path}`
-          : movieImage, // Prefer TMDB image if found
-        price: price || 9.99, // Default price if not provided
+          : movieImage,
+        price: price || 9.99,
       };
 
       // Send movie data to the cart API
@@ -119,6 +121,7 @@ function MovieDetails({ setIsAuthenticated }) {
       }
 
       const cartData = await cartResponse.json();
+      updateCart();
     } catch (error) {
       console.error("Error:", error);
     }
