@@ -27,6 +27,8 @@ SECRET_KEY = "django-insecure-(-!ag!y&b(tu=pc-53ne)di+(&yp(1qfu2a(@s+s0-%)**%l&*
 DEBUG = True
 
 ALLOWED_HOSTS = ["gtmovies.onrender.com"]
+CSRF_TRUSTED_ORIGINS = ["https://gtmovies.onrender.com"]
+
 
 # Application definition
 INSTALLED_APPS = [
