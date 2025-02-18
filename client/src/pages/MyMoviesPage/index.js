@@ -4,6 +4,7 @@ import NavBar from "../../components/NavBar";
 
 const MyMoviesPage = () => {
   const [movies, setMovies] = useState([]);
+  const [total, setTotal] = useState();
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -48,48 +49,73 @@ const MyMoviesPage = () => {
     window.location.href = "https://gtmovies.onrender.com/"; // Navigate to homepage
   };
 
-  return (
-    <div
-      className="container"
-      style={{ flexDirection: "column", backgroundColor: "white" }}
-    >
-      <div className="pageHeader">
-        <h1>My Movies</h1>
-        <button onClick={goHome} className="homeButton">
-          Back to Homepage
-        </button>
-      </div>
-      <div className="moviesGrid">
-        {movies.map((order, index) => (
-          <div key={index} className="movieContainer">
-            <div className="movie">
-              {order.image && order.image !== "0" ? (
-                <img
-                  src={order.image}
-                  alt={order.movie_title || "Untitled Movie"}
-                  className="movieImage"
-                />
-              ) : (
-                <div className="noImage">No Image Available</div>
-              )}
-            </div>
-            {/* Movie Title */}
-            <div className="movieTitle">
-              {order.movie_title && order.movie_title !== "0"
-                ? order.movie_title
-                : "Untitled Movie"}
-            </div>
-            <div className="btnContainer">
-              <button onClick={() => downloadImage(order.image)}>
-                Download
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+  useEffect(() => {
+    calculateTotal();
+  }, [movies]);
 
-      <div className="extendedFooter">
-        <p>Engineered by Yellow Jacket Spirit</p>
+  const calculateTotal = () => {
+    const count = movies.length; // No need for a loop, just use length
+    setTotal(count * 10);
+  };
+
+  return (
+    <div className="my-movies-page">
+      <NavBar />
+      <div className="movies-content">
+        <div className="pageHeader">
+          <h1>My Movies</h1>
+          <button onClick={goHome} className="homeButton">
+            Back to Homepage
+          </button>
+        </div>
+        {movies.length > 0 ? (
+          <>
+            <div className="movies-grid">
+              {movies.map((order, index) => (
+                <div key={index} className="movie-card">
+                  <div className="movie-info">
+                    {order.image && order.image !== "0" ? (
+                      <img
+                        src={order.image}
+                        alt={order.movie_title || "Untitled Movie"}
+                        className="movie-poster"
+                      />
+                    ) : (
+                      <div className="no-image">No Image Available</div>
+                    )}
+
+                    {order.timestamp && (
+                      <p className="order-time">
+                        Ordered on: {order.timestamp.substring(0, 10)}
+                      </p>
+                    )}
+
+                    <h3>
+                      {order.movie_title && order.movie_title !== "0"
+                        ? order.movie_title
+                        : "Untitled Movie"}
+                    </h3>
+                  </div>
+                  <div className="btnContainer">
+                    <button onClick={() => downloadImage(order.image)}>
+                      Download
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Total Spent Calculation */}
+            <div className="total-spent">
+              <h2>Total Spent: ${total}</h2>
+            </div>
+          </>
+        ) : (
+          <div className="no-movies">
+            <p>You haven't ordered any movies yet.</p>
+            <p>Start exploring movies to see them here!</p>
+          </div>
+        )}
       </div>
     </div>
   );
