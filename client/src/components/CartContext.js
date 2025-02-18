@@ -13,14 +13,14 @@ export function CartProvider({ children }) {
     try {
       // First, fetch user email
       const emailResponse = await fetch(
-        `http://localhost:8000/api/email/${token}/`
+        `https://gtmovies.onrender.com/api/email/${token}/`
       );
       if (!emailResponse.ok) throw new Error("Failed to fetch user email");
       const { user: userEmail } = await emailResponse.json();
       if (!userEmail) throw new Error("User email not retrieved correctly");
       // Now, fetch the cart data
       const response = await fetch(
-        `http://localhost:8000/api/cart/${userEmail}/`,
+        `https://gtmovies.onrender.com/api/cart/${userEmail}/`,
         {
           method: "GET",
         }

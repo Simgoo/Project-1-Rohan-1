@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import NavBar from "../../components/NavBar";
 import "./styles.css";
-
+import { CartContext } from "../../components/CartContext";
 const CheckOut = ({ setIsAuthenticated }) => {
   const [formData, setFormData] = useState({
     firstName: "",
