@@ -46,10 +46,6 @@ const MyMoviesPage = () => {
     document.body.removeChild(link);
   };
 
-  const goHome = () => {
-    window.location.href = "https://gtmovies.onrender.com/"; // Navigate to homepage
-  };
-
   useEffect(() => {
     calculateTotal();
   }, [movies]);
@@ -65,9 +61,6 @@ const MyMoviesPage = () => {
       <div className="movies-content">
         <div className="pageHeader">
           <h1>My Movies</h1>
-          <button onClick={goHome} className="homeButton">
-            Back to Homepage
-          </button>
         </div>
         {movies.length > 0 ? (
           <>
