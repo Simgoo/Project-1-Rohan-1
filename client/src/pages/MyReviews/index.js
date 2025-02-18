@@ -19,7 +19,6 @@ function MyReviews() {
       if (!response.success) {
         throw new Error("Failed to fetch user reviews");
       }
-
       const movieReviews = await Promise.all(
         response.reviews.map(async (review) => {
           const movieData = await fetchMovieDetails(review.movieId);
@@ -27,7 +26,8 @@ function MyReviews() {
           return {
             ...review,
             movie: {
-              title: movieData?.title || "Unknown Movie",
+              title:
+                movieData?.title || movieData?.movie_title || "Unknown Movie",
               poster: movieData?.poster_path
                 ? `https://image.tmdb.org/t/p/w500${movieData.poster_path}`
                 : "/placeholder.jpg",
