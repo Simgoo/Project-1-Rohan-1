@@ -9,27 +9,29 @@ const ProfilePage = () => {
   const [isPasswordResetOpen, setIsPasswordResetOpen] = useState(false);
   const [email, setEmail] = useState("");
 
-  const handlePasswordResetSubmit = async ({ currentPassword, newPassword }) => {
-      try {
-          const response = await resetPassword( {currentPassword, newPassword} );
+  const handlePasswordResetSubmit = async ({
+    currentPassword,
+    newPassword,
+  }) => {
+    try {
+      const response = await resetPassword({ currentPassword, newPassword });
 
-          if (response.success) {
-              alert(response.message || 'Password reset successfully!');
-              setIsPasswordResetOpen(false);
-          } else {
-              alert(response.message || "Failed to reset password");
-          }
-
-      } catch (error) {
-          alert(error.message || "Failed to reset password");
+      if (response.success) {
+        alert(response.message || "Password reset successfully!");
+        setIsPasswordResetOpen(false);
+      } else {
+        alert(response.message || "Failed to reset password");
       }
+    } catch (error) {
+      alert(error.message || "Failed to reset password");
+    }
   };
 
   const fetchEmail = async () => {
     try {
       const token = localStorage.getItem("token");
       const emailResponse = await fetch(
-        `http://localhost:8000/api/email/${token}/`
+        `https://gtmovies.onrender.com/api/email/${token}/`
       );
       if (!emailResponse.ok) throw new Error("Failed fetching user email");
 
@@ -40,7 +42,7 @@ const ProfilePage = () => {
       throw Error(error);
     }
   };
-  
+
   useEffect(() => {
     fetchEmail();
   }, []);

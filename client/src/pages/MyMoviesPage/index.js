@@ -10,7 +10,7 @@ const MyMoviesPage = () => {
     const fetchMovies = async () => {
       try {
         const emailResponse = await fetch(
-          `http://localhost:8000/api/email/${token}/`
+          `https://gtmovies.onrender.com/api/email/${token}/`
         );
         if (!emailResponse.ok) throw new Error("Failed fetching user email");
 
@@ -18,7 +18,7 @@ const MyMoviesPage = () => {
         const userEmail = emailData.user;
 
         const response = await fetch(
-          `http://localhost:8000/api/orders/${userEmail}/`
+          `https://gtmovies.onrender.com/api/orders/${userEmail}/`
         );
         const data = await response.json();
 
@@ -45,7 +45,7 @@ const MyMoviesPage = () => {
   };
 
   const goHome = () => {
-    window.location.href = "http://localhost:8000/"; // Navigate to homepage
+    window.location.href = "https://gtmovies.onrender.com/"; // Navigate to homepage
   };
 
   return (

@@ -8,10 +8,8 @@ import ReviewPopup from "../../components/ReviewPopup";
 
 function MovieDetails({ setIsAuthenticated }) {
   const [movie, setMovie] = useState([null]); // setting up movie request
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
+  const [error, setError] = useState(null);
   const { id } = useParams();
-  const [email, setEmail] = useState("");
   const token = localStorage.getItem("token");
   const [isReviewPopupOpen, setIsReviewPopupOpen] = useState(false);
 
@@ -24,7 +22,7 @@ function MovieDetails({ setIsAuthenticated }) {
     try {
       // Try fetching the movie from the local database
       let response = await fetch(
-        `http://localhost:8000/api/custommovies/${id}/`
+        `https://gtmovies.onrender.com/api/custommovies/${id}/`
       );
 
       if (!response.ok) {
@@ -59,11 +57,9 @@ function MovieDetails({ setIsAuthenticated }) {
       };
 
       setMovie(movieData);
-      setLoading(false);
     } catch (error) {
       console.error("Error fetching movie details:", error);
       setError(error.message);
-      setLoading(false);
     }
   };
 
@@ -71,7 +67,7 @@ function MovieDetails({ setIsAuthenticated }) {
     try {
       // Fetch user email from backend
       const emailResponse = await fetch(
-        `http://localhost:8000/api/email/${token}/`
+        `https://gtmovies.onrender.com/api/email/${token}/`
       );
       if (!emailResponse.ok) throw new Error("Failed fetching user email");
 
@@ -80,7 +76,7 @@ function MovieDetails({ setIsAuthenticated }) {
       // Check if the movie exists in the local database
       let movieData;
       const localMovieResponse = await fetch(
-        `http://localhost:8000/api/custommovies/${movieId}/`
+        `https://gtmovies.onrender.com/api/custommovies/${movieId}/`
       );
 
       if (localMovieResponse.ok) {
@@ -108,7 +104,7 @@ function MovieDetails({ setIsAuthenticated }) {
 
       // Send movie data to the cart API
       const cartResponse = await fetch(
-        `http://localhost:8000/api/cart/${userEmail}/`,
+        `https://gtmovies.onrender.com/api/cart/${userEmail}/`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -45,7 +45,7 @@ function NavBar() {
 
       console.log("Fetching user email...");
       const emailResponse = await fetch(
-        `http://localhost:8000/api/email/${token}/`
+        `https://gtmovies.onrender.com/api/email/${token}/`
       );
 
       if (!emailResponse.ok) {
@@ -63,7 +63,7 @@ function NavBar() {
 
       console.log("Fetching cart data...");
       const response = await fetch(
-        `http://localhost:8000/api/cart/${userEmail}/`,
+        `https://gtmovies.onrender.com/api/cart/${userEmail}/`,
         {
           method: "GET",
         }

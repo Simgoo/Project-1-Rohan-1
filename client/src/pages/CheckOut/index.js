@@ -22,7 +22,7 @@ const CheckOut = ({ setIsAuthenticated }) => {
   const fetchCart = async () => {
     try {
       const emailResponse = await fetch(
-        `http://localhost:8000/api/email/${token}/`
+        `https://gtmovies.onrender.com/api/email/${token}/`
       );
       if (!emailResponse.ok) {
         throw new Error("Failed to fetch user email");
@@ -31,7 +31,7 @@ const CheckOut = ({ setIsAuthenticated }) => {
       const userEmail = emailData.user;
 
       const cartResponse = await fetch(
-        `http://localhost:8000/api/cart/${userEmail}/`
+        `https://gtmovies.onrender.com/api/cart/${userEmail}/`
       );
       if (!cartResponse.ok) {
         throw new Error("Failed to fetch cart");
@@ -47,7 +47,7 @@ const CheckOut = ({ setIsAuthenticated }) => {
   const deleteFromCart = async (movieId) => {
     try {
       const emailResponse = await fetch(
-        `http://localhost:8000/api/email/${token}/`
+        `https://gtmovies.onrender.com/api/email/${token}/`
       );
       if (!emailResponse.ok) {
         throw new Error("Failed to fetch user email");
@@ -56,7 +56,7 @@ const CheckOut = ({ setIsAuthenticated }) => {
       const userEmail = emailData.user;
 
       const response = await fetch(
-        `http://localhost:8000/api/cart/${userEmail}/${movieId}/`,
+        `https://gtmovies.onrender.com/api/cart/${userEmail}/${movieId}/`,
         { method: "DELETE" }
       );
 
@@ -74,7 +74,7 @@ const CheckOut = ({ setIsAuthenticated }) => {
     try {
       // Step 1: Fetch the user's wallet
       const walletResponse = await fetch(
-        `http://localhost:8000/api/wallet/${token}/`
+        `https://gtmovies.onrender.com/api/wallet/${token}/`
       );
       if (!walletResponse.ok) {
         throw new Error("Failed to fetch wallet");
@@ -96,7 +96,7 @@ const CheckOut = ({ setIsAuthenticated }) => {
 
       // Step 4: Delete all items from the user's cart
       const emailResponse = await fetch(
-        `http://localhost:8000/api/email/${token}/`
+        `https://gtmovies.onrender.com/api/email/${token}/`
       );
       if (!emailResponse.ok) {
         throw new Error("Failed to fetch user email");
@@ -107,7 +107,7 @@ const CheckOut = ({ setIsAuthenticated }) => {
       // Delete items from the cart
       for (let movie of cart) {
         const deleteResponse = await fetch(
-          `http://localhost:8000/api/cart/${userEmail}/${movie.movie_id}/`,
+          `https://gtmovies.onrender.com/api/cart/${userEmail}/${movie.movie_id}/`,
           { method: "DELETE" }
         );
         if (!deleteResponse.ok) {
@@ -118,7 +118,7 @@ const CheckOut = ({ setIsAuthenticated }) => {
       // Step 5: Update the user's wallet balance
       const updatedWalletBalance = currentWalletBalance - totalAmount;
       const updateWalletResponse = await fetch(
-        `http://localhost:8000/api/wallet/${token}/`,
+        `https://gtmovies.onrender.com/api/wallet/${token}/`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -136,16 +136,19 @@ const CheckOut = ({ setIsAuthenticated }) => {
         console.log("ID: " + movie.movie_id);
         console.log("image: " + movie.image);
         console.log("TITLE2: " + movie.movie_title);
-        const orderResponse = await fetch(`http://localhost:8000/api/order/`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user: userEmail, // Ensure this is correct
-            movie: movie.movie_id, // Send the movie ID
-            movie_title: movie.movie_title, // Send the movie title
-            image: movie.image, // Send the movie image URL (if available)
-          }),
-        });
+        const orderResponse = await fetch(
+          `https://gtmovies.onrender.com/api/order/`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              user: userEmail, // Ensure this is correct
+              movie: movie.movie_id, // Send the movie ID
+              movie_title: movie.movie_title, // Send the movie title
+              image: movie.image, // Send the movie image URL (if available)
+            }),
+          }
+        );
 
         if (!orderResponse.ok) {
           const errorData = await orderResponse.text(); // Log response text
