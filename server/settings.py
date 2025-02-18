@@ -28,6 +28,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["gtmovies.onrender.com"]
 CSRF_TRUSTED_ORIGINS = ["https://gtmovies.onrender.com"]
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 
 # Application definition
