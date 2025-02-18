@@ -24,7 +24,7 @@ const MyMoviesPage = () => {
         const data = await response.json();
 
         if (data.success) {
-          setMovies(data.orders); // Set movies from the order data
+          setMovies(data.orders);
         } else {
           console.error("Error fetching movies:", data.message);
         }
@@ -34,12 +34,13 @@ const MyMoviesPage = () => {
     };
 
     fetchMovies();
-  }, []);
+  }, [token]);
 
+  // Download the image for the order
   const downloadImage = (imageUrl) => {
     const link = document.createElement("a");
-    link.href = imageUrl; // Image URL
-    link.download = imageUrl.split("/").pop(); // Suggests file name from the URL
+    link.href = imageUrl;
+    link.download = imageUrl.split("/").pop();
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

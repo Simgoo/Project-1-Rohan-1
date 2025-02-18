@@ -1,6 +1,6 @@
 import "./profilestyles.css";
 import logoImage from "../../assets/images/buzz.svg.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import PasswordResetPopup from "../../components/PasswordResetPopup";
 import { resetPassword } from "../../api";
@@ -8,6 +8,7 @@ import { resetPassword } from "../../api";
 const ProfilePage = () => {
   const [isPasswordResetOpen, setIsPasswordResetOpen] = useState(false);
   const [email, setEmail] = useState("");
+  const navigate = useNavigate();
 
   const handlePasswordResetSubmit = async ({
     currentPassword,
@@ -51,7 +52,7 @@ const ProfilePage = () => {
     <div className="container">
       <div className="navigation">
         <div className="backBtn">
-          <button>
+          <button onClick={() => navigate(-1)}>
             <p>Go back</p>
           </button>
         </div>
