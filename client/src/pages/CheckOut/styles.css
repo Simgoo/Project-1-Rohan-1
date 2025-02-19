@@ -106,7 +106,7 @@ input {
   }
   
   .delete-button:hover {
-    background-color: #ff1a1a; /* Darker red when hovered */
+    background-color: #736969; /* Darker red when hovered */
     transform: scale(1.05); /* Slightly scale up button */
   }
   
