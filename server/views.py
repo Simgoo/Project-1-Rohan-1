@@ -421,114 +421,127 @@ class GetUserOrdersView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+
 from server.models import Review
+
 
 class LeaveReview(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+
     def post(self, request):
-        try: 
+        try:
             user = request.user
 
             rating = request.data.get("rating")
             comment = request.data.get("comment")
             movie = request.data.get("movieId")
-            
+
             review = Review.objects.create(
-                user = user,
-                movie = movie,
-                rating = rating,
-                comment = comment
+                user=user, movie=movie, rating=rating, comment=comment
             )
             review.save()
-            return Response({"success": True, "message": "Review left successfully"}, status = 201)
+            return Response(
+                {"success": True, "message": "Review left successfully"}, status=201
+            )
         except Exception as e:
-            return Response({"success": False, "message": "Failed to leave a review"}, status = 400)
+            return Response(
+                {"success": False, "message": "Failed to leave a review"}, status=400
+            )
+
 
 class FetchMovieReviews(APIView):
     def get(self, request, id):
         try:
-            reviews = Review.objects.filter(movie = id)
+            reviews = Review.objects.filter(movie=id)
 
             reviews_data = []
             for review in reviews:
-                reviews_data.append({
-                    "id": review.id,
-                    "user": review.user.username,
-                    "comment": review.comment,
-                    "rating": review.rating
-                })
+                reviews_data.append(
+                    {
+                        "id": review.id,
+                        "user": review.user.username,
+                        "comment": review.comment,
+                        "rating": review.rating,
+                    }
+                )
 
-            return Response({
-                "success": True,
-                "message": "Movie reviews fetched",
-                "reviews": reviews_data
-            })
+            return Response(
+                {
+                    "success": True,
+                    "message": "Movie reviews fetched",
+                    "reviews": reviews_data,
+                }
+            )
         except Exception as e:
-            return Response({
-                "success": False,
-                "message": "Failed to fetch movie reviews"
-            })
+            return Response(
+                {"success": False, "message": "Failed to fetch movie reviews"}
+            )
+
 
 class FetchUserReviews(APIView):
     def get(self, request, token):
         try:
-            user = Token.objects.get(key = token).user
-            reviews = Review.objects.filter(user = user)
+            user = Token.objects.get(key=token).user
+            reviews = Review.objects.filter(user=user)
 
             reviews_data = []
             for review in reviews:
-                reviews_data.append({
-                    "review_id": review.id,
-                    "movieId": review.movie,
-                    "comment": review.comment,
-                    "rating": review.rating
-                })
-            
-            return Response({
-                "success": True,
-                "message": "User reviews fetched",
-                "reviews": reviews_data
-            })
-        except Exception as e:
-            return Response({
-                "success": False,
-                "message": "Failed to fetch user reviews"
-            })
-        
-class ResetPasswordView(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-    def put (self, request):
-        try:
-            user = request.user
-            currentPassword = request.data.get("currentPassword")
-            if not check_password(currentPassword, user.password):
-                return Response(
+                reviews_data.append(
                     {
-                        "success": False, 
-                        "error": "Old password is incorrect"
-                    }, 
-                    status = status.HTTP_400_BAD_REQUEST
+                        "review_id": review.id,
+                        "movieId": review.movie,
+                        "comment": review.comment,
+                        "rating": review.rating,
+                    }
                 )
 
-            newPassword = request.data.get("newPassword")
-            user.set_password(newPassword)
-            user.save()
-
-            return Response(
-            {
-                "success": True,
-                "message": "Reset password successfully"
-            },
-                status = status.HTTP_200_OK
-            )
-        except Exception as e:
-            logger.error(f"Error in ResetPasswordView: {str(e)}")
             return Response(
                 {
-                    "success": False,
-                    "message": "Failed to reset password"
-                },
-                    status = status.HTTP_500_INTERNAL_SERVER_ERROR
+                    "success": True,
+                    "message": "User reviews fetched",
+                    "reviews": reviews_data,
+                }
+            )
+        except Exception as e:
+            return Response(
+                {"success": False, "message": "Failed to fetch user reviews"}
+            )
+
+
+class ResetPassword(APIView):
+    def post(self, request):
+        try:
+            email = request.data.get("email")
+            password = request.data.get("password")
+            birthday = request.data.get("birthday")
+
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                return Response(
+                    {"success": False, "error": "Old password is incorrect"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            user_profile = get_object_or_404(UserProfile, user=user)
+
+            if str(birthday) == str(user_profile.birthday):
+                user.set_password(password)
+                user.save()
+                return Response(
+                    {"success": True, "message": "Updated password successfully"}
+                )
+
+            else:
+                return Response(
+                    {
+                        "success": False,
+                        "message": "Failed to verify credentials. Please check your email and birthday.",
+                    },
+                    status=400,
+                )
+
+        except Exception as e:
+            return Response(
+                {"success": False, "message": "Failed to verify/reset password"}
             )

@@ -149,27 +149,6 @@ export const leaveReview = async (userData) => {
   }
 };
 
-export const resetPassword = async (passwords) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/reset_password/`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Token ${token}`,
-      },
-      body: JSON.stringify(passwords),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to reset password");
-    }
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
 export const fetchMovieDetails = async (id) => {
   try {
     let response = await fetch(
@@ -192,5 +171,40 @@ export const fetchMovieDetails = async (id) => {
   } catch (error) {
     console.log(error);
     throw error;
+  }
+};
+
+export const resetPassword = async (formData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/resetpassword/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed checking credentials");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const deleteReview = async (reviewId) => {
+  //BACKEND LOGIC HERE - Taha
+  try {
+    const response = await fetch(`/api/reviews/${reviewId}`, {
+      method: "DELETE",
+    });
+    const data = await response.json();
+    return data; // Make sure your backend returns { success: true } on success.
+  } catch (error) {
+    console.error("Error deleting review:", error);
+    return { success: false, error };
   }
 };

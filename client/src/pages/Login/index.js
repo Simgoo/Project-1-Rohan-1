@@ -1,21 +1,29 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { loginUser } from "../../api";
+
 import "./styles.css";
 import logoImage from "../../assets/images/buzz.svg.png";
+
 function Login({ setIsLoggedIn }) {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
   const [error, setError] = useState("");
+  const [loading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
+
     try {
       const response = await loginUser(formData);
       if (response.success) {
@@ -27,12 +35,15 @@ function Login({ setIsLoggedIn }) {
     } catch (error) {
       setError("An error occurred during login. Please try again later.");
     } finally {
+      setIsLoading(false);
     }
   };
+
   return (
     <div className="loginBox">
       <h1>Sign In</h1>
       <img src={logoImage} alt="Buzz Logo" className="logo" />
+
       {error && (
         <p style={{ color: "red" }}>
           {error.includes("Invalid Login Credentials")
@@ -40,6 +51,7 @@ function Login({ setIsLoggedIn }) {
             : "Login failed. Please try again."}
         </p>
       )}
+
       <form className="form" onSubmit={handleSubmit}>
         <input
           type="email"
@@ -58,10 +70,15 @@ function Login({ setIsLoggedIn }) {
         <button type="submit"> Sign In </button>
         <div>
           {" "}
-          Don't have an account? <Link to="/signup"> Sign Up </Link>{" "}
+          Don't Have An Account? <Link to="/signup"> Sign Up </Link>{" "}
+        </div>
+        <div>
+          {" "}
+          Forgot Password? <Link to="/resetpassword"> Reset </Link>{" "}
         </div>
       </form>
     </div>
   );
 }
+
 export default Login;

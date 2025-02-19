@@ -8,7 +8,7 @@ import SignUp from "./pages/SignUp";
 import MyMoviesPage from "./pages/MyMoviesPage";
 import ProfilePage from "./pages/ProfilePage";
 import MyReviews from "./pages/MyReviews";
-
+import ResetPassword from "./pages/ResetPassword";
 import { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
@@ -43,6 +43,10 @@ function App() {
           <Route
             path="/signup"
             element={isLoggedIn ? <Navigate to="/" /> : <SignUp />}
+          />
+          <Route
+            path="/resetpassword"
+            element={isLoggedIn ? <Navigate to="/" /> : <ResetPassword />}
           />
 
           {/* Protected Routes */}
