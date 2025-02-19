@@ -93,18 +93,31 @@ input {
     width: 100%;
 }
 
-delete-button:focus,
-.delete-button:hover {
-    outline: none;
-    box-shadow: none;
-    background: transparent;
-    background: white;
-}
-
-
-.delete-button:hover {
-    transform: scale(1.1);
-}
+/* delete-button */
+.delete-button {
+    background-color: #f8f8f8; 
+    font-size: 16px; 
+    font-weight: bold; 
+    border: none; 
+    border-radius: 5px; 
+    padding: 8px 16px; 
+    cursor: pointer; 
+    transition: background-color 0.3s ease, transform 0.2s ease; 
+  }
+  
+  .delete-button:hover {
+    background-color: #ff1a1a; /* Darker red when hovered */
+    transform: scale(1.05); /* Slightly scale up button */
+  }
+  
+  .delete-button:focus {
+    outline: none; /* Remove focus outline for cleaner UI */
+  }
+  
+  .delete-button:active {
+    background-color: #e60000; /* Darker red when clicked */
+  }
+  
 
 .clear-cart-button {
     background-color: #004b55;
