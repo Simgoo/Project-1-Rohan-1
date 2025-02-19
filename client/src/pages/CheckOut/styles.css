@@ -62,7 +62,7 @@ input {
 }
 
 .checkout-button {
-    background-color: #007bff;
+    background-color:#f8f8f8;
     color: white;
     padding: 1rem;
     border: none;
@@ -84,4 +84,26 @@ input {
 
 .checkout-form h2 {
     margin-bottom: 1.5rem;
+}
+
+
+.total-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+.clear-cart-button {
+    background-color: #004b55;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+.clear-cart-button:hover {
+    background-color: #e63e3e;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }

@@ -19,6 +19,33 @@ const CheckOut = ({ setIsAuthenticated }) => {
     updateCart();
   }, [updateCart]);
 
+  const clearCart = async () => {
+    try {
+      const emailResponse = await fetch(
+        `http://localhost:8000/api/email/${token}/`
+      );
+      if (!emailResponse.ok) {
+        throw new Error("Failed to fetch user email");
+      }
+      const emailData = await emailResponse.json();
+      const userEmail = emailData.user;
+      for (const movie of cart.items) {
+        const response = await fetch(
+          `http://localhost:8000/api/cart/${userEmail}/${movie.movie_id}/`,
+          { method: "DELETE" }
+        );
+        if (!response.ok) {
+          throw new Error(
+            `Failed to remove movie ${movie.movie_title} from cart`
+          );
+        }
+      }
+      updateCart();
+    } catch (error) {
+      console.error("Error clearing cart:", error);
+    }
+  };
+
   const deleteFromCart = async (movieId) => {
     try {
       const emailResponse = await fetch(
@@ -155,7 +182,7 @@ const CheckOut = ({ setIsAuthenticated }) => {
       <NavBar setIsAuthenticated={setIsAuthenticated} />
       <div className="checkout-container">
         <div className="checkout-content">
-          <div className="order-summary">
+          <div className="order-summary-content">
             <h2>Order Summary</h2>
             <div className="order-summary">
               {cart.items && cart.items.length > 0 ? (
@@ -182,14 +209,22 @@ const CheckOut = ({ setIsAuthenticated }) => {
                 <p>Your cart is empty.</p>
               )}
               <div className="total-section">
-                <h3>
-                  Total: $
-                  {cart.items
-                    ? cart.items
-                        .reduce((total, movie) => total + (movie.price || 0), 0)
-                        .toFixed(2)
-                    : "0.00"}
-                </h3>
+                <div className="total-wrapper">
+                  <h3>
+                    Total: $
+                    {cart.items
+                      ? cart.items
+                          .reduce(
+                            (total, movie) => total + (movie.price || 0),
+                            0
+                          )
+                          .toFixed(2)
+                      : "0.00"}
+                  </h3>
+                  <button className="clear-cart-button" onClick={clearCart}>
+                    Clear All
+                  </button>
+                </div>
               </div>
             </div>
           </div>
