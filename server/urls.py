@@ -49,7 +49,7 @@ urlpatterns = [
     path("api/movies/<int:movie_id>/", get_movie_details, name="get_movie_details"),
     path("api/register/", RegistrationView.as_view(), name="register"),
     path("api/login/", LoginView.as_view(), name="login"),
-    path("api/reset_password/", ResetPasswordView.as_view(), name="reset_password"),
+    path("api/reset_password/", ResetPassword.as_view(), name="reset_password"),
     path("api/cart/", CartView.as_view(), name="cart"),
     path("api/cart/<str:email>/", CartView.as_view(), name="cart-detail"),
     path("api/cart/<str:email>/<int:movie_id>/", CartView.as_view()),
