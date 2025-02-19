@@ -22,7 +22,7 @@ const CheckOut = ({ setIsAuthenticated }) => {
   const clearCart = async () => {
     try {
       const emailResponse = await fetch(
-        `http://localhost:8000/api/email/${token}/`
+        `https://gtmovies.onrender.com/api/email/${token}/`
       );
       if (!emailResponse.ok) {
         throw new Error("Failed to fetch user email");
@@ -31,7 +31,7 @@ const CheckOut = ({ setIsAuthenticated }) => {
       const userEmail = emailData.user;
       for (const movie of cart.items) {
         const response = await fetch(
-          `http://localhost:8000/api/cart/${userEmail}/${movie.movie_id}/`,
+          `https://gtmovies.onrender.com/api/cart/${userEmail}/${movie.movie_id}/`,
           { method: "DELETE" }
         );
         if (!response.ok) {
