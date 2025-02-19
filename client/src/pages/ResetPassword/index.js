@@ -23,7 +23,6 @@ function ResetPassword() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-
     if (formData.newpassword == formData.confirmnewpassword) {
       try {
         const response = await resetPassword({
