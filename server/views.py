@@ -40,8 +40,20 @@ class RegistrationView(APIView):
                 "October",
                 "November",
                 "December",
+                "january",
+                "february",
+                "march",
+                "april",
+                "may",
+                "june",
+                "july",
+                "august",
+                "september",
+                "october",
+                "november",
+                "december",
             ]
-
+            print("Birthday Data: ", birthday)
             if birthday not in valid_months:
                 return JsonResponse(
                     {
@@ -72,7 +84,7 @@ class RegistrationView(APIView):
                 user=user, birthday=birthday, wallet=10.00
             )
             user_profile.save()
-
+            print(f"UserProfile: {user_profile}")
             return JsonResponse(
                 {
                     "success": True,
