@@ -26,71 +26,68 @@ from rest_framework import status
 from .models import User, UserProfile
 from rest_framework.authtoken.models import Token
 from django.http import JsonResponse
-from datetime import datetime
 
 
-def post(self, request):
-    try:
-        email = request.data.get("email")
-        password = request.data.get("password")
-        birthday = request.data.get("birthday")
+class RegistrationView(APIView):
+    def post(self, request):
+        try:
+            email = request.data.get("email")
+            password = request.data.get("password")
+            birthday = request.data.get("birthday")
 
-        # Ensure birthday is in the correct format
-        if birthday:
-            try:
-                birthday = datetime.strptime(
-                    birthday, "%Y-%m-%d"
-                ).date()  # Convert string to date
-            except ValueError:
+            if birthday:
+                try:
+                    birthday = datetime.strptime(birthday, "%Y-%m-%d").date()
+                except ValueError:
+                    return JsonResponse(
+                        {
+                            "success": False,
+                            "message": "Invalid birthday format. Use YYYY-MM-DD.",
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
+            if User.objects.filter(email=email).exists():
                 return JsonResponse(
-                    {
-                        "success": False,
-                        "message": "Invalid birthday format. Use YYYY-MM-DD.",
-                    },
+                    {"success": False, "message": "Email already exists"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        if User.objects.filter(email=email).exists():
-            return JsonResponse(
-                {"success": False, "message": "Email already exists"},
-                status=status.HTTP_400_BAD_REQUEST,
+            user = User.objects.create_user(
+                username=email, email=email, password=password
             )
 
-        user = User.objects.create_user(username=email, email=email, password=password)
+            token, created = Token.objects.get_or_create(user=user)
+            if not created:
+                return JsonResponse(
+                    {"success": False, "message": "Token already exists."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            user_profile = UserProfile.objects.create(
+                user=user, birthday=birthday, wallet=10.00
+            )
+            user_profile.save()
 
-        token, created = Token.objects.get_or_create(user=user)
-        if not created:
             return JsonResponse(
-                {"success": False, "message": "Token already exists."},
-                status=status.HTTP_400_BAD_REQUEST,
+                {
+                    "success": True,
+                    "message": "You are now registered!",
+                    "token": token.key,
+                },
+                status=status.HTTP_201_CREATED,
             )
 
-        # Now create the user profile with the properly formatted birthday
-        user_profile = UserProfile.objects.create(
-            user=user, birthday=birthday, wallet=10.00
-        )
-        user_profile.save()  # This should now work properly
+        except Exception as e:
+            import traceback
 
-        return JsonResponse(
-            {
-                "success": True,
-                "message": "You are now registered!",
-                "token": token.key,
-            },
-            status=status.HTTP_201_CREATED,
-        )
-
-    except Exception as e:
-        import traceback
-
-        print(traceback.format_exc())  # Print full error traceback to debug
-        return Response(
-            {
-                "success": False,
-                "message": "An unexpected error occurred. Please try again later.",
-            },
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
+            print(traceback.format_exc())
+            return Response(
+                {
+                    "success": False,
+                    "message": "An unexpected error occurred. Please try again later.",
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 class LoginView(APIView):
