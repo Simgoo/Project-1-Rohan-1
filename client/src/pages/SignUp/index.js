@@ -21,13 +21,10 @@ function SignUp() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleDateChange = (date) => {
-    setFormData({ ...formData, birthday: date });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    console.log("Birthday:", formData.birthday, typeof formData.birthday);
 
     try {
       const payload = {
@@ -69,7 +66,7 @@ function SignUp() {
           type="birthday"
           name="birthday"
           placeholder="month you were born"
-          onChange={handleSubmit}
+          onChange={handleChange}
           required
         />
         <button type="submit" disabled={loading}>
@@ -82,3 +79,5 @@ function SignUp() {
     </div>
   );
 }
+
+export default SignUp;
