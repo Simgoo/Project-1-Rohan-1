@@ -28,20 +28,14 @@ function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log("Birthday:", formData.birthday, typeof formData.birthday);
-  
+
     try {
-      const formattedBirthday =
-        formData.birthday instanceof Date
-          ? formData.birthday.toISOString().split("T")[0]
-          : null;
-  
       const payload = {
         email: formData.email,
         password: formData.password,
-        birthday: formattedBirthday,
+        birthday: formData.birthday,
       };
-  
+
       await registerUser(payload);
     } catch (error) {
       console.error("Error during registration:", error);
@@ -50,7 +44,6 @@ function SignUp() {
       setIsLoading(false);
     }
   };
-  
 
   return (
     <div className="loginBox">
@@ -72,16 +65,11 @@ function SignUp() {
           onChange={handleChange}
           required
         />
-        <DatePicker
-          selected={formData.birthday}
-          onChange={handleDateChange}
+        <input
+          type="birthday"
           name="birthday"
-          placeholderText="Birthday"
-          dateFormat="yyyy/MM/dd"
-          showYearDropdown
-          scrollableYearDropdown
-          yearDropdownItemNumber={100}
-          showMonthDropdown
+          placeholder="month you were born"
+          onChange={handleSubmit}
           required
         />
         <button type="submit" disabled={loading}>
@@ -94,5 +82,3 @@ function SignUp() {
     </div>
   );
 }
-
-export default SignUp;
