@@ -52,16 +52,19 @@ from datetime import date
 logger = logging.getLogger(__name__)
 
 
-@receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         logger.info(f"Creating user profile for {instance.username}")
-        default_birthday = date(2000, 1, 1)
+
+        default_birthday = "January"
+
         UserProfile.objects.get_or_create(
-            user=instance, defaults={"wallet": 10.00, "birthday": default_birthday}
+            user=instance,
+            defaults={"wallet": 10.00, "birthday": default_birthday},
         )
 
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
-    instance.userprofile.save()
+    if hasattr(instance, "userprofile"):
+        instance.userprofile.save()
