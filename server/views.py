@@ -20,15 +20,6 @@ def index(request):
     return render(request, "index.html")
 
 
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework import status
-from .models import User, UserProfile
-from rest_framework.authtoken.models import Token
-from django.http import JsonResponse
-from datetime import datetime
-
-
 class RegistrationView(APIView):
     def post(self, request):
         try:
@@ -36,17 +27,29 @@ class RegistrationView(APIView):
             password = request.data.get("password")
             birthday = request.data.get("birthday")
 
-            if birthday:
-                try:
-                    birthday = datetime.strptime(birthday, "%Y-%m-%d").date()
-                except ValueError:
-                    return JsonResponse(
-                        {
-                            "success": False,
-                            "message": "Invalid birthday format. Use YYYY-MM-DD.",
-                        },
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
+            valid_months = [
+                "January",
+                "February",
+                "March",
+                "April",
+                "May",
+                "June",
+                "July",
+                "August",
+                "September",
+                "October",
+                "November",
+                "December",
+            ]
+
+            if birthday not in valid_months:
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "message": "Invalid month. Please use a valid month name (e.g., July).",
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             if User.objects.filter(email=email).exists():
                 return JsonResponse(
@@ -64,6 +67,7 @@ class RegistrationView(APIView):
                     {"success": False, "message": "Token already exists."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+
             user_profile = UserProfile.objects.create(
                 user=user, birthday=birthday, wallet=10.00
             )
