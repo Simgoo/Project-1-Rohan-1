@@ -15,6 +15,7 @@ from rest_framework.authentication import TokenAuthentication
 from django.contrib.auth.hashers import check_password
 from django.db.models import ObjectDoesNotExist
 
+
 def index(request):
     return render(request, "index.html")
 
@@ -25,6 +26,7 @@ from rest_framework import status
 from .models import User, UserProfile
 from rest_framework.authtoken.models import Token
 from django.http import JsonResponse
+
 
 class RegistrationView(APIView):
     def post(self, request):
@@ -50,11 +52,9 @@ class RegistrationView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             user_profile = UserProfile.objects.create(
-                user = user,
-                birthday = birthday,
-                wallet = 10.00 
+                user=user, birthday=birthday, wallet=10.00
             )
-
+            user_profile.save()
             return JsonResponse(
                 {
                     "success": True,
@@ -72,6 +72,7 @@ class RegistrationView(APIView):
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
 
 class LoginView(APIView):
     def post(self, request):
@@ -112,6 +113,7 @@ class LoginView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+
 class EmailView(APIView):
     def get(self, request, token, format=None):
         try:
@@ -151,9 +153,7 @@ class CartView(APIView):
             )
             cart_item.save()
 
-            print(
-                "Saved Cart Item:", cart_item.image
-            )
+            print("Saved Cart Item:", cart_item.image)
 
             return JsonResponse({"message": "Movie added to cart"}, status=201)
 
@@ -258,10 +258,11 @@ def get_movie_details(request, movie_id):
         return JsonResponse(movie)
     return JsonResponse({"error": "Failed to fetch movie details"}, status=500)
 
+
 @api_view(["GET", "DELETE"])
-def movie_detail(request, id): 
+def movie_detail(request, id):
     try:
-        movie = Movie.objects.get(id=id) 
+        movie = Movie.objects.get(id=id)
 
         if request.method == "GET":
             serializer = MovieSerializer(movie)
@@ -330,15 +331,14 @@ def wallet_view(request, token):
     except Token.DoesNotExist:
         return Response({"error": "Invalid token"}, status=status.HTTP_404_NOT_FOUND)
 
+
 class CreateOrderView(APIView):
     def post(self, request):
         try:
             user_email = request.data.get("user")
             movie_id = request.data.get("movie")
-            movie_title = request.data.get(
-                "movie_title"
-            ) 
-            image = request.data.get("image")  
+            movie_title = request.data.get("movie_title")
+            image = request.data.get("image")
 
             user = get_object_or_404(User, email=user_email)
 
@@ -367,9 +367,7 @@ class GetUserOrdersView(APIView):
     def get(self, request, user_email):
         try:
             user = get_object_or_404(User, email=user_email)
-            orders = Order.objects.filter(user=user).order_by(
-                "-timestamp"
-            )
+            orders = Order.objects.filter(user=user).order_by("-timestamp")
             serializer = OrderSerializer(orders, many=True)
 
             return JsonResponse(
@@ -382,79 +380,91 @@ class GetUserOrdersView(APIView):
                 {"success": False, "message": str(e)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
+
 class LeaveReview(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+
     def post(self, request):
-        try: 
+        try:
             user = request.user
 
             rating = request.data.get("rating")
             comment = request.data.get("comment")
             movie = request.data.get("movieId")
-            
+
             review = Review.objects.create(
-                user = user,
-                movie = movie,
-                rating = rating,
-                comment = comment
+                user=user, movie=movie, rating=rating, comment=comment
             )
             review.save()
-            return Response({"success": True, "message": "Review left successfully"}, status = 201)
+            return Response(
+                {"success": True, "message": "Review left successfully"}, status=201
+            )
         except Exception as e:
-            return Response({"success": False, "message": "Failed to leave a review"}, status = 400)
+            return Response(
+                {"success": False, "message": "Failed to leave a review"}, status=400
+            )
+
 
 class FetchMovieReviews(APIView):
     def get(self, request, id):
         try:
-            reviews = Review.objects.filter(movie = id)
+            reviews = Review.objects.filter(movie=id)
 
             reviews_data = []
             for review in reviews:
-                reviews_data.append({
-                    "id": review.id,
-                    "user": review.user.username,
-                    "comment": review.comment,
-                    "rating": review.rating
-                })
+                reviews_data.append(
+                    {
+                        "id": review.id,
+                        "user": review.user.username,
+                        "comment": review.comment,
+                        "rating": review.rating,
+                    }
+                )
 
-            return Response({
-                "success": True,
-                "message": "Movie reviews fetched",
-                "reviews": reviews_data
-            })
+            return Response(
+                {
+                    "success": True,
+                    "message": "Movie reviews fetched",
+                    "reviews": reviews_data,
+                }
+            )
         except Exception as e:
-            return Response({
-                "success": False,
-                "message": "Failed to fetch movie reviews"
-            })
+            return Response(
+                {"success": False, "message": "Failed to fetch movie reviews"}
+            )
+
 
 class FetchUserReviews(APIView):
     def get(self, request, token):
         try:
-            user = Token.objects.get(key = token).user
-            reviews = Review.objects.filter(user = user)
+            user = Token.objects.get(key=token).user
+            reviews = Review.objects.filter(user=user)
 
             reviews_data = []
             for review in reviews:
-                reviews_data.append({
-                    "review_id": review.id,
-                    "movieId": review.movie,
-                    "comment": review.comment,
-                    "rating": review.rating
-                })
-            
-            return Response({
-                "success": True,
-                "message": "User reviews fetched",
-                "reviews": reviews_data
-            })
+                reviews_data.append(
+                    {
+                        "review_id": review.id,
+                        "movieId": review.movie,
+                        "comment": review.comment,
+                        "rating": review.rating,
+                    }
+                )
+
+            return Response(
+                {
+                    "success": True,
+                    "message": "User reviews fetched",
+                    "reviews": reviews_data,
+                }
+            )
         except Exception as e:
-            return Response({
-                "success": False,
-                "message": "Failed to fetch user reviews"
-            })
+            return Response(
+                {"success": False, "message": "Failed to fetch user reviews"}
+            )
+
 
 class ResetPassword(APIView):
     def post(self, request):
@@ -464,33 +474,35 @@ class ResetPassword(APIView):
             birthday = request.data.get("birthday")
 
             try:
-                user = User.objects.get(email = email)
+                user = User.objects.get(email=email)
             except User.DoesNotExist:
                 return Response(
                     {"success": False, "message": "User not found"},
                     status=status.HTTP_404_NOT_FOUND,
                 )
-            user_profile = get_object_or_404(UserProfile, user = user)
-            
+            user_profile = get_object_or_404(UserProfile, user=user)
+
             if str(birthday) == str(user_profile.birthday):
                 user.set_password(password)
                 user.save()
-                return Response({
-                    "success": True,
-                    "message": "Updated password successfully"
-                })
-            
+                return Response(
+                    {"success": True, "message": "Updated password successfully"}
+                )
+
             else:
-                return Response({
-                    "success": False,
-                    "message": "Failed to verify credentials. Please check your email and birthday."
-                }, status=400)
+                return Response(
+                    {
+                        "success": False,
+                        "message": "Failed to verify credentials. Please check your email and birthday.",
+                    },
+                    status=400,
+                )
 
         except Exception as e:
-            return Response({
-                "success": False,
-                "message": "Failed to verify/reset password"
-            })
+            return Response(
+                {"success": False, "message": "Failed to verify/reset password"}
+            )
+
 
 class DeleteReview(APIView):
     def post(self, request):
@@ -500,9 +512,14 @@ class DeleteReview(APIView):
             review.delete()
             return Response({"success": True, "message": "Deleted review"})
         except ObjectDoesNotExist:
-            return Response({"success": False, "message": "Review not found"}, status=404)
+            return Response(
+                {"success": False, "message": "Review not found"}, status=404
+            )
         except Exception as e:
-            return Response({"success": False, "message": "Failed to delete review"}, status=500)
+            return Response(
+                {"success": False, "message": "Failed to delete review"}, status=500
+            )
+
 
 class EditReview(APIView):
     def post(self, request):
@@ -514,6 +531,10 @@ class EditReview(APIView):
             review.save()
             return Response({"success": True, "message": "Edited review"})
         except ObjectDoesNotExist:
-            return Response({"success": False, "message": "Review not found"}, status=404)
+            return Response(
+                {"success": False, "message": "Review not found"}, status=404
+            )
         except Exception as e:
-            return Response({"success": False, "message": "Failed to edit review"}, status=500)
+            return Response(
+                {"success": False, "message": "Failed to edit review"}, status=500
+            )
